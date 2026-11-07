@@ -86,9 +86,10 @@ export default async function TradeDetailPage({ params }: { params: Promise<{ id
 
 function Stat({ label, value, big }: { label: string; value: React.ReactNode; big?: boolean }) {
   return (
-    <div className="rounded-[var(--radius-card)] border border-line/70 bg-card px-4 py-3">
-      <p className="text-[11px] uppercase tracking-[0.12em] text-muted">{label}</p>
-      <p className={cn("num mt-1 font-semibold", big ? "text-xl" : "text-[15px]")}>{value}</p>
+    <div className="@container min-w-0 rounded-[var(--radius-card)] border border-line/70 bg-card px-4 py-3">
+      <p className="truncate text-[11px] uppercase tracking-[0.12em] text-muted" title={label}>{label}</p>
+      {/* exact value (no abbreviation on the trade itself); font shrinks to fit the tile */}
+      <p className={cn("num mt-1 truncate font-semibold", big ? "text-[clamp(0.95rem,12cqi,1.25rem)]" : "text-[clamp(0.85rem,10cqi,0.95rem)]")}>{value}</p>
     </div>
   );
 }

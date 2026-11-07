@@ -98,7 +98,7 @@ const en = {
     winLoss: "Win / loss", byPair: "By pair", byWeekday: "By weekday", byHour: "By hour of entry", byDirection: "Long vs short",
     byEmotion: "By emotion", byAccount: "By account", rDistribution: "R-multiple distribution", tradingDays: "Trading days",
     dayWinRate: "Green days", avgDay: "Avg day", trades: "Trades", dayPnl: "Day P&L", noData: "No data for this period.",
-    group: "Group", noEmotion: "Not recorded", wlb: "{w}W · {l}L · {b}BE", weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    group: "Group", noEmotion: "Not recorded", wlb: "{w}W · {l}L · {b}BE", streakMax: "Best {w}W · worst {l}L", weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     scopeExcluded: "Showing {currency} accounts only. Excluded (different currency): {list}. Select an account to see it.",
   },
   dashboard: {

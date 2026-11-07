@@ -19,14 +19,20 @@ export function createFormatter(locale: Locale) {
     return f;
   };
 
-  const money = (v: string | null | undefined, currency = "USD", opts: { sign?: boolean; compact?: boolean } = {}): string => {
+  /**
+   * Money with the currency symbol ($, €). `kpi: true` abbreviates large amounts (≥ 10 000) for tight tiles:
+   * "+100 tis. $" / "+$100K"; the exact value should be shown in a tooltip (use `money()` without `kpi`).
+   */
+  const money = (v: string | null | undefined, currency = "USD", opts: { sign?: boolean; compact?: boolean; kpi?: boolean } = {}): string => {
     const d = parseDec(v);
     if (!d) return "—";
     const signDisplay = opts.sign ? "exceptZero" : "auto";
-    if (opts.compact && d.abs().gte(10000)) {
-      return nf(`mc${currency}${signDisplay}`, { style: "currency", currency, notation: "compact", maximumFractionDigits: 1, signDisplay }).format(d.toDecimalPlaces(0).toFixed() as `${number}`);
+    if ((opts.compact || opts.kpi) && d.abs().gte(10000)) {
+      return nf(`mc${currency}${signDisplay}`, { style: "currency", currency, currencyDisplay: "narrowSymbol", notation: "compact", minimumFractionDigits: 0, maximumFractionDigits: 1, signDisplay })
+        .format(d.toDecimalPlaces(0).toFixed() as `${number}`);
     }
-    return nf(`m${currency}${signDisplay}`, { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay }).format(d.toDecimalPlaces(2).toFixed(2) as `${number}`);
+    return nf(`m${currency}${signDisplay}`, { style: "currency", currency, currencyDisplay: "narrowSymbol", minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay })
+      .format(d.toDecimalPlaces(2).toFixed(2) as `${number}`);
   };
 
   const num = (v: string | number | null | undefined, maxDp = 2, minDp = 0): string => {
@@ -70,7 +76,7 @@ export function createFormatter(locale: Locale) {
 
   /** Compact axis label for charts (number input is fine here: display only). */
   const axisMoney = (v: number, currency: string) =>
-    nf(`ax${currency}`, { style: "currency", currency, notation: "compact", maximumFractionDigits: 1 }).format(v);
+    nf(`ax${currency}`, { style: "currency", currency, currencyDisplay: "narrowSymbol", notation: "compact", maximumFractionDigits: 1 }).format(v);
 
   return { locale, tag, dfLocale, money, num, pct, r, rr, date, duration, axisMoney };
 }

@@ -159,7 +159,7 @@ test("simple journal: accounts → trades → statistics → Slovak", async ({ p
   await page.goto("/dashboard");
   await page.getByRole("group", { name: "Language" }).first().getByRole("button", { name: "sk" }).click();
   await expect(page.getByRole("link", { name: "Prehľad" })).toBeVisible();
-  await expect(page.getByTestId("kpi-net")).toContainText(/\+150,00\sUSD/);
+  await expect(page.getByTestId("kpi-net")).toContainText(/\+150,00\s\$/);
   await expect(page.getByTestId("kpi-winrate")).toContainText(/50,0\s%/);
   if (shots) await page.screenshot({ path: `${shots}/dashboard-sk.png`, fullPage: true });
   await page.goto("/trades/new");

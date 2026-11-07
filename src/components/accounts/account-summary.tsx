@@ -23,22 +23,22 @@ export function AccountSummary({ a, trades, t, f, timeZone, today, compact }: {
   const statusTone = ps ? (ps.status === "breached" || ps.status === "danger" ? "loss" : ps.status === "warning" ? "warning" : ps.status === "passed" ? "profit" : "neutral") : "neutral";
   const bar = (v: number | null): "loss" | "warn" | "gold" => ((v ?? 0) >= 80 ? "loss" : (v ?? 0) >= 50 ? "warn" : "gold");
   return (
-    <div className="space-y-4">
+    <div className="@container space-y-4">
       <div className="flex flex-wrap items-center gap-1.5">
         <Badge tone={isProp ? "gold" : "neutral"}>{isProp ? a.prop_firm || t.account.prop : t.account.personal}</Badge>
         <Badge tone={phase === "funded" || phase === "live" ? "profit" : "neutral"}>{t.account.phase[phase]}</Badge>
         {!a.is_active && <Badge>{t.account.inactive}</Badge>}
         {ps && <Badge tone={statusTone}>{t.accounts.status[ps.status]}</Badge>}
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Metric label={t.accounts.balance} value={balance ? f.money(balance, a.currency) : "—"} />
-        <Metric label={t.stats.netPnl} value={<Pnl value={s.netPnl} currency={a.currency} />} />
+      <div className="grid grid-cols-2 gap-3 @lg:grid-cols-4">
+        <Metric label={t.accounts.balance} value={balance ? f.money(balance, a.currency) : "—"} title={balance ? f.money(balance, a.currency) : undefined} />
+        <Metric label={t.stats.netPnl} value={<Pnl value={s.netPnl} currency={a.currency} />} title={f.money(s.netPnl, a.currency, { sign: true })} />
         <Metric label={t.stats.winRate} value={f.pct(s.winRate)} sub={plural(f.locale, s.totalTrades, t.common.trades)} />
         <Metric label={t.stats.avgR} value={f.r(s.avgR)} />
         {!compact && <Metric label={t.stats.profitFactor} value={s.profitFactorInfinite ? "∞" : f.num(s.profitFactor, 2, 2)} />}
-        {!compact && <Metric label={t.stats.maxDrawdown} value={f.money(s.maxDrawdown, a.currency)} />}
-        {!compact && <Metric label={t.stats.avgWinner} value={f.money(s.avgWinner, a.currency)} />}
-        {!compact && <Metric label={t.stats.avgLoser} value={f.money(s.avgLoser, a.currency)} />}
+        {!compact && <Metric label={t.stats.maxDrawdown} value={f.money(s.maxDrawdown, a.currency)} title={f.money(s.maxDrawdown, a.currency)} />}
+        {!compact && <Metric label={t.stats.avgWinner} value={f.money(s.avgWinner, a.currency)} title={f.money(s.avgWinner, a.currency)} />}
+        {!compact && <Metric label={t.stats.avgLoser} value={f.money(s.avgLoser, a.currency)} title={f.money(s.avgLoser, a.currency)} />}
       </div>
       {ps && (
         <div className="space-y-3 rounded-xl border border-line bg-elevated/40 p-4">
@@ -52,8 +52,14 @@ export function AccountSummary({ a, trades, t, f, timeZone, today, compact }: {
   );
 }
 
-function Metric({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
-  return <div><p className="text-[11px] uppercase tracking-wider text-muted">{label}</p><p className="num mt-1 text-sm font-semibold">{value}</p>{sub && <p className="text-[11px] text-muted">{sub}</p>}</div>;
+function Metric({ label, value, sub, title }: { label: string; value: React.ReactNode; sub?: string; title?: string }) {
+  return (
+    <div className="min-w-0">
+      <p className="truncate text-[11px] uppercase tracking-wider text-muted" title={label}>{label}</p>
+      <p className="num mt-1 truncate text-sm font-semibold" title={title}>{value}</p>
+      {sub && <p className="truncate text-[11px] text-muted">{sub}</p>}
+    </div>
+  );
 }
 
 function Rule({ label, detail, value, tone }: { label: string; detail: string; value: number | null; tone: "gold" | "profit" | "loss" | "warn" }) {

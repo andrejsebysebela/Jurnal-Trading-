@@ -54,7 +54,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
       />
       <ScopeNote excluded={excluded} currency={currency} />
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label={t.calendar.monthPnl} value={f.money(ms.netPnl, currency, { sign: true })} tone={tone(ms.netPnl) === "neutral" ? "neutral" : tone(ms.netPnl)} />
+        <Kpi label={t.calendar.monthPnl} value={f.money(ms.netPnl, currency, { sign: true, kpi: true })} title={f.money(ms.netPnl, currency, { sign: true })} tone={tone(ms.netPnl) === "neutral" ? "neutral" : tone(ms.netPnl)} />
         <Kpi label={t.calendar.tradingDays} value={String(monthDays.length)} sub={fill(t.calendar.greenRed, { green, red: monthDays.length - green })} />
         <Kpi label={t.stats.winRate} value={f.pct(ms.winRate)} sub={plural(f.locale, ms.closedTrades, t.common.trades)} />
         <Kpi label={t.stats.avgR} value={f.r(ms.avgR)} />

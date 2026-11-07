@@ -90,15 +90,15 @@ const sk: Dictionary = {
   stats: {
     netPnl: "Čistý výsledok", winRate: "Úspešnosť", winRateHint: "Ziskové ÷ (ziskové + stratové). Nulové obchody sa nepočítajú.", profitFactor: "Profit faktor",
     profitFactorHint: "Celkový zisk ziskových obchodov ÷ celková strata stratových", totalTrades: "Obchody", avgWinner: "Priem. zisk", avgLoser: "Priem. strata",
-    expectancy: "Očakávaná hodnota", expectancyHint: "Priemerný výsledok na obchod", avgR: "Priem. R", totalR: "Celkové R", maxDrawdown: "Max. drawdown",
+    expectancy: "Priemer na obchod", expectancyHint: "Očakávaná hodnota: priemerný výsledok na jeden obchod", avgR: "Priem. R", totalR: "Celkové R", maxDrawdown: "Max. drawdown",
     maxDrawdownHint: "Najväčší pokles krivky kapitálu od vrcholu", bestTrade: "Najlepší obchod", worstTrade: "Najhorší obchod",
-    avgDuration: "Priem. trvanie", streak: "Aktuálna séria", longestWin: "Najdlhšia zisková séria", longestLoss: "Najdlhšia stratová séria",
+    avgDuration: "Priem. trvanie", streak: "Séria", longestWin: "Najdlhšia zisková séria", longestLoss: "Najdlhšia stratová séria",
     winStreak: { one: "{n} zisk", few: "{n} zisky", other: "{n} ziskov" }, lossStreak: { one: "{n} strata", few: "{n} straty", other: "{n} strát" },
     equityCurve: "Krivka kapitálu", cumulative: "Kumulatívny výsledok", balance: "Zostatok účtu", dailyPnl: "Denný výsledok", monthly: "Mesačný výsledok",
     winLoss: "Zisky / straty", byPair: "Podľa páru", byWeekday: "Podľa dňa v týždni", byHour: "Podľa hodiny vstupu", byDirection: "Long vs short",
     byEmotion: "Podľa emócie", byAccount: "Podľa účtu", rDistribution: "Rozdelenie R-násobkov", tradingDays: "Obchodné dni",
     dayWinRate: "Ziskové dni", avgDay: "Priemerný deň", trades: "Obchody", dayPnl: "Výsledok dňa", noData: "Pre toto obdobie nie sú dáta.",
-    group: "Skupina", noEmotion: "Nezadané", wlb: "{w} zisk. · {l} strat. · {b} nul.", weekdays: ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"],
+    group: "Skupina", noEmotion: "Nezadané", wlb: "{w} zisk. · {l} strat. · {b} nul.", streakMax: "Max. {w} zisk. · {l} strat. za sebou", weekdays: ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"],
     scopeExcluded: "Zobrazujú sa len účty v mene {currency}. Vynechané (iná mena): {list}. Vyberte účet, ak ho chcete vidieť.",
   },
   dashboard: {

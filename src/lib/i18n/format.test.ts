@@ -9,9 +9,20 @@ describe("i18n formatting", () => {
     expect(en.money("1234.5", "USD", { sign: true })).toBe("+$1,234.50");
     expect(en.money("-804.2", "USD")).toBe("-$804.20");
     expect(sk.money("1234.5", "EUR").replace(/\s/g, " ")).toBe("1 234,50 €");
+    expect(sk.money("100000", "USD", { sign: true }).replace(/\s/g, " ")).toBe("+100 000,00 $");
     expect(sk.money("-0.005", "EUR")).not.toContain("NaN");
     expect(en.money("123456789012345678.125", "USD")).toBe("$123,456,789,012,345,678.13");
     expect(en.money(null)).toBe("—");
+  });
+  it("abbreviates large KPI amounts only", () => {
+    const n = (x: string) => x.replace(/\s/g, " ");
+    expect(en.money("100000", "USD", { sign: true, kpi: true })).toBe("+$100K");
+    expect(en.money("12345.67", "USD", { kpi: true })).toBe("$12.3K");
+    expect(en.money("1250000", "EUR", { kpi: true })).toBe("€1.3M");
+    expect(en.money("9999.99", "USD", { kpi: true })).toBe("$9,999.99");
+    expect(n(sk.money("100000", "USD", { sign: true, kpi: true }))).toBe("+100 tis. $");
+    expect(n(sk.money("-1250000", "EUR", { kpi: true }))).toBe("-1,3 mil. €");
+    expect(n(sk.money("-804.2", "EUR", { kpi: true }))).toBe("-804,20 €");
   });
   it("formats R, RR and percent", () => {
     expect(en.r("1.255")).toBe("+1.26R");

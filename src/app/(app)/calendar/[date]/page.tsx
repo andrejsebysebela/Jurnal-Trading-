@@ -44,7 +44,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
       </div>
       <ScopeNote excluded={excluded} currency={currency} />
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label={t.stats.dayPnl} value={f.money(s.netPnl, currency, { sign: true })} tone={tone(s.netPnl) === "neutral" ? "neutral" : tone(s.netPnl)} />
+        <Kpi label={t.stats.dayPnl} value={f.money(s.netPnl, currency, { sign: true, kpi: true })} title={f.money(s.netPnl, currency, { sign: true })} tone={tone(s.netPnl) === "neutral" ? "neutral" : tone(s.netPnl)} />
         <Kpi label={t.stats.trades} value={String(s.totalTrades)} sub={fill(t.stats.wlb, { w: s.wins, l: s.losses, b: s.breakevens })} />
         <Kpi label={t.stats.winRate} value={f.pct(s.winRate)} />
         <Kpi label={t.stats.avgR} value={f.r(s.avgR)} />
