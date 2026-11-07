@@ -1,4 +1,13 @@
-export const SESSIONS = ["Asia", "London", "New York", "London/NY overlap", "Pre-market", "After-hours"];
-export const TIMEFRAMES = ["1m", "2m", "5m", "15m", "30m", "1h", "4h", "1D", "1W"];
-export const EMOTIONS = ["Calm", "Confident", "Focused", "Anxious", "Fearful", "Greedy", "Impatient", "Frustrated", "Overconfident", "Bored", "Revenge"];
-export const JOURNAL_EMOTIONS = ["Calm", "Focused", "Confident", "Tired", "Anxious", "Frustrated", "Impatient", "Euphoric", "Distracted"];
+/** Emotion keys stored in trades.emotional_state; labels come from the i18n dictionary. */
+export const EMOTIONS = ["calm", "confident", "focused", "patient", "anxious", "fearful", "greedy", "impatient", "frustrated", "overconfident", "fomo", "revenge", "bored", "tired"] as const;
+export type Emotion = (typeof EMOTIONS)[number];
+
+/** Normalise legacy values ("Calm", "FOMO") to keys; unknown values are returned as-is. */
+export function emotionKey(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const k = v.trim().toLowerCase();
+  return (EMOTIONS as readonly string[]).includes(k) ? k : v.trim();
+}
+
+export const PROP_PHASES = ["challenge", "verification", "funded"] as const;
+export const PERSONAL_PHASES = ["live", "demo"] as const;

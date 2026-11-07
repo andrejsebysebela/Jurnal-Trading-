@@ -13,7 +13,13 @@ Priority:
 
 Forex/CFD/futures without the required fields ⇒ **unavailable** (`MISSING_INSTRUMENT_SPEC`). Nothing is assumed.
 
-## Per trade
+## Simple trades (current journal, `computeSimpleTrade`)
+Inputs (account currency): risk > 0, result (any sign), optional planned RR > 0, open/close time (close ≥ open).
+- **R-multiple** = result ÷ risk (4 dp). **Outcome**: result > 0 win, < 0 loss, = 0 breakeven. **Duration** = close − open.
+- Stored as `net_pnl = gross_pnl = result`, `fees = 0`, `initial_risk = risk`, `planned_rr`, `pnl_source = 'manual'`.
+- All aggregates below apply unchanged. Decimal commas ("12,5") are accepted in forms.
+
+## Per trade (legacy execution-based trades)
 - **Direction:** from the first execution (buy ⇒ long) or explicit; the first execution must be an entry.
 - **Lot matching:** exits close open entry lots FIFO (default) or LIFO (profile setting). An exit larger than the open position is
   rejected (`POSITION_FLIP`); the importer splits flips into two trades with pro-rated fees before calling the engine.

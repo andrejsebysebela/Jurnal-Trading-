@@ -1,7 +1,11 @@
-import { money, tone, toneClass } from "@/lib/utils/format";
+"use client";
+import { useI18n } from "@/lib/i18n/client";
+import { tone, toneClass } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 
-export function Pnl({ value, currency, className, sign = true, unavailableLabel = "—" }: { value: string | null | undefined; currency: string; className?: string; sign?: boolean; unavailableLabel?: string }) {
-  if (value === null || value === undefined) return <span className={cn("text-muted", className)} title="Unavailable — missing instrument spec or FX rate">{unavailableLabel}</span>;
-  return <span className={cn("num", toneClass[tone(value)], className)}>{money(value, currency, { sign })}</span>;
+/** Signed, coloured money value. Polarity is shown by sign AND colour (colour alone fails CVD). */
+export function Pnl({ value, currency, className, sign = true, compact }: { value: string | null | undefined; currency: string; className?: string; sign?: boolean; compact?: boolean }) {
+  const { t, f } = useI18n();
+  if (value === null || value === undefined) return <span className={cn("text-muted", className)}>{t.common.unavailable}</span>;
+  return <span className={cn("num", toneClass[tone(value)], className)}>{f.money(value, currency, { sign, compact })}</span>;
 }

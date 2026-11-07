@@ -25,6 +25,7 @@ export interface Account {
   max_daily_loss: string | null;
   max_total_drawdown: string | null;
   drawdown_type: "static" | "trailing";
+  prop_phase: "challenge" | "verification" | "funded" | null;
   created_at: string;
 }
 
@@ -83,9 +84,12 @@ export interface TradeRow {
   instrument_id: string | null;
   strategy_id: string | null;
   symbol: string;
-  asset_class: AssetClass;
+  asset_class: AssetClass | null;
   direction: Direction;
   status: "open" | "closed";
+  entry_mode: "executions" | "simple";
+  tradingview_url: string | null;
+  psychology_notes: string | null;
   is_draft: boolean;
   opened_at: string;
   closed_at: string | null;
@@ -105,7 +109,7 @@ export interface TradeRow {
   gross_pnl: string | null;
   fees: string;
   net_pnl: string | null;
-  pnl_source: PnlSource;
+  pnl_source: PnlSource | "manual";
   initial_risk: string | null;
   r_multiple: string | null;
   planned_rr: string | null;

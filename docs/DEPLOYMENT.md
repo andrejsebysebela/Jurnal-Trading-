@@ -44,13 +44,14 @@ git push -u origin main
    Never point local development or tests at production.
 
 ### 1.1 Apply the migrations (non-destructive, additive)
-The three files in `supabase/migrations/` create everything (tables, indexes, RLS, storage bucket + policies, functions):
+The files in `supabase/migrations/` create everything (tables, indexes, RLS, storage bucket + policies, functions):
 
 | File | Contents |
 |---|---|
 | `20261107000001_init.sql` | Schema, RLS + policies, `save_trade` RPC, signup trigger |
 | `20261107000002_storage.sql` | Private `screenshots` bucket + storage policies |
 | `20261107000003_hardening.sql` | Rate-limit function (private schema), timezone-aware signup trigger |
+| `20261108000004_simple_journal.sql` | Simple journal columns (TradingView link, psychology, entry mode) and prop firm phase |
 
 Option A — Supabase CLI (recommended):
 
@@ -66,13 +67,13 @@ pnpm exec supabase link --project-ref <project-ref>
 pnpm exec supabase db push --dry-run
 ```
 
-Review the list (it must only show the three migrations above on a fresh project), then:
+Review the list (it must only show the migrations above that are not yet applied), then:
 
 ```bash
 pnpm exec supabase db push
 ```
 
-Option B — SQL editor: paste and run the three files **in order**.
+Option B — SQL editor: paste and run the files **in order**.
 
 > ⚠️ Never run `supabase db reset` against a linked production project — it wipes data. Future schema changes must be new
 > migration files, reviewed with `db push --dry-run` first.

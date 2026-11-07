@@ -1,4 +1,0 @@
-account,execution_id,symbol,side,quantity,price,executed_at,commission,fee
-Main,1001,ES,buy,2,5000.25,2024-03-05T14:30:00Z,2.10,0
-Main,1002,ES,sell,1,5005.50,2024-03-05T14:45:00Z,1.05,0
-Main,1003,ES,sell,1,5010.00,2024-03-05T15:05:00Z,1.05,0

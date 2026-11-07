@@ -1,6 +1,6 @@
 import { format, parseISO, subDays } from "date-fns";
 import { toChartNumber } from "@/lib/engine";
-import { pct } from "@/lib/utils/format";
+import type { Formatter } from "@/lib/i18n/format";
 import type { DailyPoint, EquityPoint, GroupRow, MonthlyPoint } from "./series";
 
 /** Conversion to JS numbers happens ONLY here, for rendering. */
@@ -13,5 +13,5 @@ export const toEquityData = (pts: EquityPoint[], startingBalance?: string | null
 };
 export const toDailyData = (pts: DailyPoint[]) => pts.map((p) => ({ date: p.date, pnl: toChartNumber(p.netPnl), trades: p.trades }));
 export const toMonthlyData = (pts: MonthlyPoint[]) => pts.map((p) => ({ month: p.month, pnl: toChartNumber(p.netPnl), trades: p.trades }));
-export const toGroupData = (rows: GroupRow[], limit = 10) =>
-  rows.slice(0, limit).map((r) => ({ label: r.label, pnl: toChartNumber(r.summary.netPnl), trades: r.summary.totalTrades, winRate: pct(r.summary.winRate) }));
+export const toGroupData = (rows: GroupRow[], f: Formatter, limit = 10) =>
+  rows.slice(0, limit).map((r) => ({ label: r.label, pnl: toChartNumber(r.summary.netPnl), trades: r.summary.totalTrades, winRate: f.pct(r.summary.winRate) }));

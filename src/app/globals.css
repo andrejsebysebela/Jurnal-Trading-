@@ -37,3 +37,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert
 .recharts-cartesian-grid line { stroke: #1f2530; }
 .recharts-text { fill: var(--color-muted); font-size: 11px; }
 .recharts-tooltip-cursor { fill: rgba(198, 161, 91, 0.06); }
+
+/* Native <select> option lists are drawn by the OS (Windows ignores the page's dark theme and
+   showed white text on a white list — readable only on hover). Give options explicit colours. */
+select option, select optgroup { background-color: #141922; color: #F5F5F5; }
+select option:checked { background-color: #2a3240; }
+select option:disabled { color: #657080; }
+datalist option { background-color: #141922; color: #F5F5F5; }

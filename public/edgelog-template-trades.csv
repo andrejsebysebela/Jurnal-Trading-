@@ -1,2 +1,0 @@
-account,trade_id,symbol,side,quantity,entry_price,exit_price,open_time,close_time,stop_loss,take_profit,commission,swap,profit
-Main,5001,EURUSD,buy,1.00,1.08500,1.08750,2024-03-05 08:00:00,2024-03-05 10:30:00,1.08300,1.09000,7.00,0,243.00

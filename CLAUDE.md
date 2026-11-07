@@ -1,7 +1,19 @@
 # EDGELOG — permanent project rules
 
-EDGELOG is a professional trading journal & performance analytics SaaS (Next.js App Router + Supabase).
+EDGELOG is a trading journal & performance statistics SaaS (Next.js App Router + Supabase), bilingual (Slovak + English).
 Read `docs/ARCHITECTURE.md` and `docs/CALCULATIONS.md` before changing anything financial.
+
+## Product scope (decided by the owner, 2026-11-08)
+Trades are entered in the **simple journal** (`entry_mode = 'simple'`): pair, direction, risk amount, result, planned RR,
+open/close time, account, screenshots / TradingView link, emotion + psychology notes, notes. Statistics derive from these.
+Accounts are prop firm (challenge / verification / funded) or personal (live / demo), each with its own statistics.
+Do not reintroduce the removed detailed modules (executions UI, instruments, strategies, journal, playbook, import) unless asked.
+
+## Internationalisation
+- Every user-facing string lives in `src/lib/i18n/dictionaries/{en,sk}.ts` (`sk` is typed as `Dictionary`, so missing keys fail typecheck).
+- Server: `const { t, f } = await getI18n()`; client: `const { t, f } = useI18n()`. Validation schemas take `t` for messages.
+- Format numbers/money/dates ONLY with the formatter `f` (`f.money`, `f.pct`, `f.r`, `f.rr`, `f.date`, `f.duration`) — never hand-written.
+- Plurals with `plural(locale, n, forms)` (Slovak has one/few/other); placeholders with `fill()`.
 
 ## Non-negotiable financial rules
 1. **Never use JS `number` arithmetic for money, prices or quantities.** Use `D` / `dec()` from `src/lib/engine/decimal.ts`
@@ -12,10 +24,10 @@ Read `docs/ARCHITECTURE.md` and `docs/CALCULATIONS.md` before changing anything 
 3. **Never substitute today's FX rate for a missing historical rate.** `createFxLookup` only uses the exact date
    (or a prior date within the user's `fx_max_stale_days`, 0–7). Never a future rate.
 4. **Never sum money across currencies.** Aggregations are scoped to one currency (`loadAnalytics` / `loadPeriod`).
-5. One calculation engine: `src/lib/engine`. Do not create a second implementation. Server computes and stores
-   results (`trade-service.ts`); the client may run the same engine for previews only.
-6. Executions are the source of truth. Computed trade columns must be rebuildable via `recalculateTrades`.
-   Any change to instrument specs, FX rates, account currency or calc settings must trigger recalculation.
+5. One calculation engine: `src/lib/engine`. Simple trades use `computeSimpleTrade` (R = result ÷ risk, outcome, duration);
+   the server computes and stores (`saveSimpleTrade`); the client runs the same function for the live preview only.
+6. Simple trades: the result is entered by the trader in the account currency (`pnl_source = 'manual'`) — that is the source
+   of truth. Legacy execution-based trades (`entry_mode = 'executions'`) keep their stored values; the execution engine remains for them.
 7. Timestamps are stored in UTC (`timestamptz`); display/day-bucketing uses the profile timezone.
 8. Numeric DB columns are selected as `::text` (see `src/lib/db/columns.ts`) — never let PostgREST hand back floats.
 
@@ -33,11 +45,12 @@ Read `docs/ARCHITECTURE.md` and `docs/CALCULATIONS.md` before changing anything 
 - UI: use design tokens (`bg-card`, `text-fg-2`, `text-profit`, `text-gold`…) from `src/app/globals.css`; gold sparingly.
   Profit/loss colour must always be paired with a sign or position (red/green fails CVD checks).
 - Forms: wrap controls with `<Field>` so labels are programmatically associated.
+- Native `<select>` option colours are set globally in `globals.css` (Windows ignores the dark theme otherwise).
 
 ## Testing requirements (run before every commit)
-- `pnpm test` — Vitest unit tests (engine, analytics, import). New financial logic needs hand-verified test cases.
+- `pnpm test` — Vitest unit tests (engine, simple trades, analytics, i18n formatting). New financial logic needs hand-verified test cases.
 - `pnpm test:db` — migrations + RLS isolation tests on plain PostgreSQL (needs a local `psql`; see supabase/tests/run.sh).
-- `pnpm test:e2e` — Playwright journey against the app + local Supabase (`pnpm db:start`, `pnpm dev`).
+- `pnpm test:e2e` — Playwright journey (English + Slovak) against the app + local Supabase (`pnpm db:start`, `pnpm dev`).
 - `pnpm test:integration` — tenant isolation through the real Supabase REST/Storage API (local stack only).
 - `pnpm typecheck && pnpm lint && pnpm build` must pass; CI (`.github/workflows/ci.yml`) runs them plus `test:db` and `pnpm audit`.
 

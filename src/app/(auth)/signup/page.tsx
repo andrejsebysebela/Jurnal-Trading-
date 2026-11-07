@@ -1,12 +1,16 @@
 import { AuthForm } from "@/components/auth/auth-form";
+import { getI18n } from "@/lib/i18n/server";
 
-export const metadata = { title: "Create account" };
+export async function generateMetadata() {
+  return { title: (await getI18n()).t.auth.createAccount };
+}
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  const { t } = await getI18n();
   return (
     <>
-      <h2 className="text-2xl font-semibold">Create your account</h2>
-      <p className="mb-8 mt-1 text-sm text-fg-2">Start journaling with accurate, decimal-exact analytics.</p>
+      <h2 className="text-2xl font-semibold">{t.auth.createTitle}</h2>
+      <p className="mb-8 mt-1 text-sm text-fg-2">{t.auth.createSubtitle}</p>
       <AuthForm mode="signup" />
     </>
   );

@@ -11,6 +11,8 @@ const serviceKey = process.env.E2E_SUPABASE_SERVICE_KEY;
 test("forgot password page never reveals whether an email exists", async ({ page }) => {
   await page.goto("/login");
   await page.getByRole("link", { name: "Forgot password?" }).click();
+  await page.waitForURL("**/forgot-password");
+  await expect(page.getByRole("button", { name: "Send reset link" })).toBeVisible();
   await page.getByLabel("Email").fill(`nobody+${Date.now()}@example.com`);
   await page.getByRole("button", { name: "Send reset link" }).click();
   await expect(page.getByText("If an account exists for that email")).toBeVisible();

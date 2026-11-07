@@ -12,6 +12,9 @@ export default defineConfig({
   use: {
     baseURL: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3000",
     trace: "off",
+    // English UI by default (Accept-Language); the Slovak test switches language explicitly.
+    locale: "en-US",
+    timezoneId: "UTC",
     launchOptions: executablePath ? { executablePath } : {},
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 960 } } }],

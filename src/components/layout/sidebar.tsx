@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation";
 import { ChevronsLeft, ChevronsRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils/cn";
+import { useI18n } from "@/lib/i18n/client";
 import { Logo } from "./logo";
 import { NAV } from "./nav";
 
 export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen: boolean; onMobileClose: () => void }) {
   const pathname = usePathname();
+  const { t } = useI18n();
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
     try { setCollapsed(localStorage.getItem("edgelog.sidebar") === "1"); } catch {}
@@ -27,14 +29,15 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen: boolean; on
       <div className="flex h-full flex-col">
         <div className={cn("flex h-16 items-center border-b border-line/60", c ? "justify-center px-2" : "justify-between px-5")}>
           <Link href="/dashboard" aria-label="EDGELOG home"><Logo collapsed={c} /></Link>
-          {isMobile && <button onClick={onMobileClose} className="rounded-md p-1 text-muted hover:text-fg" aria-label="Close menu"><X className="size-5" /></button>}
+          {isMobile && <button onClick={onMobileClose} className="rounded-md p-1 text-muted hover:text-fg" aria-label={t.nav.closeMenu}><X className="size-5" /></button>}
         </div>
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           {NAV.map((group) => (
             <div key={group.section} className="mb-5">
-              {!c && <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{group.section}</p>}
+              {!c && <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{t.nav[group.section]}</p>}
               <ul className="space-y-0.5">
-                {group.items.map(({ href, label, icon: Icon }) => {
+                {group.items.map(({ href, key, icon: Icon }) => {
+                  const label = t.nav[key];
                   const active = pathname === href || pathname.startsWith(`${href}/`);
                   return (
                     <li key={href}>
@@ -59,8 +62,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: { mobileOpen: boolean; on
           ))}
         </nav>
         {!isMobile && (
-          <button onClick={toggle} className="flex h-12 items-center justify-center gap-2 border-t border-line/60 text-xs text-muted hover:text-fg" aria-label={c ? "Expand sidebar" : "Collapse sidebar"}>
-            {c ? <ChevronsRight className="size-4" /> : <><ChevronsLeft className="size-4" /> Collapse</>}
+          <button onClick={toggle} className="flex h-12 items-center justify-center gap-2 border-t border-line/60 text-xs text-muted hover:text-fg" aria-label={c ? t.nav.expand : t.nav.collapse}>
+            {c ? <ChevronsRight className="size-4" /> : <><ChevronsLeft className="size-4" /> {t.nav.collapse}</>}
           </button>
         )}
       </div>

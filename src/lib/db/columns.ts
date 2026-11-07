@@ -2,7 +2,7 @@
 const n = (cols: string[]) => cols.map((c) => `${c}:${c}::text`).join(",");
 
 export const ACCOUNT_COLUMNS = [
-  "id,name,broker,account_type,currency,is_active,prop_firm,drawdown_type,created_at",
+  "id,name,broker,account_type,currency,is_active,prop_firm,drawdown_type,prop_phase,created_at",
   n(["starting_balance", "profit_target", "max_daily_loss", "max_total_drawdown"]),
 ].join(",");
 
@@ -15,7 +15,7 @@ export const TRADE_COLUMNS = [
   "id,account_id,instrument_id,strategy_id,symbol,asset_class,direction,status,is_draft,opened_at,closed_at,activity_at",
   "pnl_currency,pnl_source,outcome,holding_seconds,calc_issues,setup,session,timeframe,rating,confidence,discipline_rating",
   "emotional_state,rule_compliant,checklist_state,note_entry_reason,note_expectation,note_exit_reason,note_did_well",
-  "note_did_wrong,note_lesson,notes,created_at,updated_at",
+  "note_did_wrong,note_lesson,notes,created_at,updated_at,entry_mode,tradingview_url,psychology_notes",
   n([
     "stop_loss", "take_profit", "manual_initial_risk", "swap", "broker_net_pnl", "entry_quantity", "exit_quantity",
     "open_quantity", "avg_entry_price", "avg_exit_price", "gross_pnl_quote", "gross_pnl", "fees", "net_pnl", "initial_risk",

@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import type { AnalyticsTrade } from "@/lib/analytics";
+import { emotionKey } from "@/lib/constants";
 import { ACCOUNT_COLUMNS, EXECUTION_COLUMNS, INSTRUMENT_COLUMNS, TRADE_COLUMNS } from "./columns";
 import { FILTER_COOKIE, parseFilters, resolveRange, type GlobalFilters } from "./filters";
 import type { UserContext } from "./session";
@@ -136,7 +137,7 @@ export function toAnalytics(rows: TradeRow[], strategies: Strategy[] = []): Anal
       id: t.id,
       accountId: t.account_id,
       symbol: t.symbol,
-      assetClass: t.asset_class,
+      assetClass: t.asset_class ?? "",
       direction: t.direction,
       status: t.status,
       openedAt: t.opened_at,
@@ -155,6 +156,7 @@ export function toAnalytics(rows: TradeRow[], strategies: Strategy[] = []): Anal
       mistakes: tags.filter((x) => x.tags?.kind === "mistake").map((x) => x.tags!.name),
       ruleCompliant: t.rule_compliant,
       disciplineRating: t.discipline_rating,
+      emotion: emotionKey(t.emotional_state),
     };
   });
 }

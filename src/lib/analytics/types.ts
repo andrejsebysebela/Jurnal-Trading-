@@ -24,6 +24,7 @@ export interface AnalyticsTrade {
   mistakes: string[];
   ruleCompliant: boolean | null;
   disciplineRating: number | null;
+  emotion?: string | null;
 }
 
 export interface Summary {

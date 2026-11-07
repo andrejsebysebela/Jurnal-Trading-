@@ -37,3 +37,15 @@ were inferred from the modules the spec lists (import, accounts/prop firms, jour
 - Vercel compatibility: 4 MB CSV cap (4.5 MB body limit), `maxDuration` on heavy pages, pinned `packageManager`/`engines`, no localhost in production.
 - Verification added: integration isolation tests (real REST/Storage), password-reset E2E, screenshot upload E2E, `verify_production.sql`, CI workflow, Dependabot.
 - See docs/DEPLOYMENT.md and docs/SECURITY.md (remaining risks).
+
+## Simplified journal + Slovak/English (2026-11-08)
+Requested by the owner after first production use:
+- Simple trade entry (pair, direction, risk, result, planned RR, open/close time, account, screenshots, TradingView link, emotion,
+  psychology, notes); live R preview; edit/duplicate/delete; statistics by pair, weekday, hour, direction, emotion, account.
+- Accounts: prop firm (challenge / verification / funded) or personal (live / demo); per-account statistics and prop rule progress.
+- Navigation reduced to Dashboard, Trades, Calendar, Statistics, Accounts, Settings. Removed UI modules (instruments, strategies,
+  daily journal, notes, playbook, progress tracker, CSV import, reports, performance) — code is in git history; tables are kept.
+- Full Slovak + English UI with locale-aware money/number/date formatting and Slovak plurals; language switch in the top bar,
+  auth pages and Settings (cookie, defaults to the browser language).
+- Fixed: native dropdown options were white-on-white on Windows; screenshots picked in the new-trade form were dropped.
+- Verified: 56 unit tests, RLS suite, 5 API isolation tests, 80/80 production checks, 6 E2E tests on the production build (EN + SK), mobile width.

@@ -31,6 +31,8 @@ with expected_tables(name) as (
   union all select 'index: ' || i, exists (select 1 from pg_indexes where schemaname = 'public' and indexname = i)
     from unnest(array['trades_user_activity_idx','trades_user_account_idx','trades_user_symbol_idx','trades_strategy_idx','executions_trade_idx','executions_fingerprint_uidx','rule_checks_user_date_idx']) i
   union all select 'signup trigger present', exists (select 1 from pg_trigger where tgname = 'on_auth_user_created')
-  union all select 'all 3 migrations applied', (select count(*) from supabase_migrations.schema_migrations where version in ('20261107000001','20261107000002','20261107000003')) = 3
+  union all select 'all 4 migrations applied', (select count(*) from supabase_migrations.schema_migrations where version in ('20261107000001','20261107000002','20261107000003','20261108000004')) = 4
+  union all select 'simple journal columns present', (select count(*) from information_schema.columns where table_schema = 'public'
+    and ((table_name = 'trades' and column_name in ('entry_mode','tradingview_url','psychology_notes')) or (table_name = 'accounts' and column_name = 'prop_phase'))) = 4
 )
 select item as check_name, ok from checks order by ok, item;

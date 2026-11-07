@@ -1,41 +1,34 @@
 import { Download } from "lucide-react";
-import { FxRates, ProfileForm, RecalculateButton, TagManager } from "@/components/forms/settings-forms";
+import { ProfileForm } from "@/components/forms/profile-form";
+import { LanguageSwitcher } from "@/components/layout/topbar";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { listFxRates, listTags } from "@/lib/db/queries";
 import { requireUser } from "@/lib/db/session";
+import { getI18n } from "@/lib/i18n/server";
 
-// Server actions on this page (import / recalculation) may run longer than the default.
-export const maxDuration = 60;
-export const metadata = { title: "Settings" };
+export async function generateMetadata() {
+  return { title: (await getI18n()).t.settings.title };
+}
 
 export default async function SettingsPage() {
-  const { supabase, profile, user } = await requireUser();
-  const [rates, tags] = await Promise.all([listFxRates(supabase), listTags(supabase)]);
-  const timeZones = Intl.supportedValuesOf("timeZone");
+  const { profile, user } = await requireUser();
+  const { t } = await getI18n();
   return (
     <>
-      <PageHeader title="Settings" description={user.email} />
+      <PageHeader title={t.settings.title} description={user.email} />
       <div className="space-y-4">
         <Card>
-          <CardHeader><div><CardTitle>Profile &amp; calculation preferences</CardTitle><CardDescription>Changing matching, tolerance or FX staleness recalculates all trades.</CardDescription></div></CardHeader>
-          <CardContent><ProfileForm profile={profile} timeZones={timeZones} /></CardContent>
-        </Card>
-        <Card id="fx">
-          <CardHeader><div><CardTitle>Historical FX rates</CardTitle><CardDescription>Used to convert P&amp;L when an instrument&apos;s currency differs from the account currency. Rates are applied by trade close date — today&apos;s rate is never substituted for a missing historical one.</CardDescription></div></CardHeader>
-          <CardContent><FxRates rates={rates} /></CardContent>
+          <CardHeader><CardTitle>{t.settings.language}</CardTitle></CardHeader>
+          <CardContent><LanguageSwitcher /></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle>Tags &amp; mistakes</CardTitle></CardHeader>
-          <CardContent><TagManager tags={tags} /></CardContent>
+          <CardHeader><CardTitle>{t.settings.profile}</CardTitle></CardHeader>
+          <CardContent><ProfileForm profile={profile} timeZones={Intl.supportedValuesOf("timeZone")} /></CardContent>
         </Card>
         <Card>
-          <CardHeader><div><CardTitle>Data</CardTitle><CardDescription>Executions are the source of truth; every metric can be rebuilt from them.</CardDescription></div></CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            <RecalculateButton />
-            <Button asChild variant="secondary"><a href="/api/export" download><Download />Export all data (JSON)</a></Button>
-          </CardContent>
+          <CardHeader><div><CardTitle>{t.settings.data}</CardTitle><CardDescription>{t.settings.dataBody}</CardDescription></div></CardHeader>
+          <CardContent><Button asChild variant="secondary"><a href="/api/export" download><Download />{t.settings.exportAll}</a></Button></CardContent>
         </Card>
       </div>
     </>

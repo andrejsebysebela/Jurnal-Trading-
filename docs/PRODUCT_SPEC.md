@@ -1,5 +1,8 @@
 # EDGELOG — Product specification
 
+> **Current scope (2026-11-08):** simplified journal + Slovak/English — see the *Product scope* section in `CLAUDE.md`
+> and `docs/IMPLEMENTATION_STATUS.md`. The module list below describes the original v1 and is partly superseded.
+
 **Category:** professional trading journal & performance analytics SaaS.
 **Vision:** turn a trader's history into actionable performance data so they become more consistent.
 

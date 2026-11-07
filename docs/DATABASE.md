@@ -36,6 +36,11 @@ Migrations: `supabase/migrations/*.sql`. Tests: `supabase/tests` (`pnpm test:db`
   advisory lock per user/action, prunes events older than 24 h. Executable by `authenticated` only.
 - `handle_new_user()` now stores the sign-up timezone if it is a valid `pg_timezone_names` entry (else `UTC`) and caps display names at 80 chars.
 
+## Simple journal migration (`20261108000004_simple_journal.sql`)
+Additive only: `pnl_source` enum value `manual`; `trades.asset_class` nullable; new columns `trades.entry_mode`
+('executions' | 'simple', default 'executions'), `trades.tradingview_url` (https://…tradingview.com only), `trades.psychology_notes`;
+`accounts.prop_phase` ('challenge' | 'verification' | 'funded'). Personal accounts use `account_type` 'live' / 'demo'.
+
 ## Production verification
 `supabase/verify_production.sql` — read-only checklist (tables, RLS, policies, bucket privacy/limits, storage policies, function
 security, indexes, applied migrations). Run it in the SQL editor after every deployment of migrations.

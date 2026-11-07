@@ -1,21 +1,23 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { TRADE_COLUMNS } from "@/lib/db/columns";
+import type { TradeRow } from "@/lib/db/types";
 import { requireUser } from "@/lib/db/session";
-import { EXECUTION_COLUMNS, TRADE_COLUMNS } from "@/lib/db/columns";
-import type { TradeWithRelations } from "@/lib/db/types";
-import { flattenErrors, tradeFormSchema } from "@/lib/validation/schemas";
-import { saveTrade } from "@/server/services/trade-service";
+import { getI18n } from "@/lib/i18n/server";
+import { flattenErrors, simpleTradeSchema } from "@/lib/validation/schemas";
+import { saveSimpleTrade } from "@/server/services/trade-service";
 import { fail, type ActionResult } from "./result";
 
 const uuid = z.string().uuid();
 
 export async function saveTradeAction(input: unknown): Promise<ActionResult<{ id: string }>> {
-  const parsed = tradeFormSchema.safeParse(input);
-  if (!parsed.success) return fail("Please fix the highlighted fields.", flattenErrors(parsed.error));
+  const { t } = await getI18n();
+  const parsed = simpleTradeSchema(t).safeParse(input);
+  if (!parsed.success) return fail(t.common.fixFields, flattenErrors(parsed.error));
   try {
     const ctx = await requireUser();
-    const res = await saveTrade(ctx, parsed.data);
+    const res = await saveSimpleTrade(ctx, parsed.data, t);
     if (!res.ok) return fail(res.error, res.fieldErrors);
     revalidatePath("/", "layout");
     return { ok: true, data: { id: res.id } };
@@ -26,7 +28,7 @@ export async function saveTradeAction(input: unknown): Promise<ActionResult<{ id
 
 export async function deleteTrades(ids: string[]): Promise<ActionResult> {
   const parsed = z.array(uuid).min(1).max(1000).safeParse(ids);
-  if (!parsed.success) return fail("Invalid selection.");
+  if (!parsed.success) return fail((await getI18n()).t.common.genericError);
   const { supabase } = await requireUser();
   const { data: shots } = await supabase.from("screenshots").select("storage_path").in("trade_id", parsed.data);
   const { error } = await supabase.from("trades").delete().in("id", parsed.data);
@@ -36,78 +38,40 @@ export async function deleteTrades(ids: string[]): Promise<ActionResult> {
   return { ok: true };
 }
 
+/** Copy a trade's journal fields (not screenshots) into a new trade. */
 export async function duplicateTrade(id: string): Promise<ActionResult<{ id: string }>> {
-  if (!uuid.safeParse(id).success) return fail("Invalid trade.");
+  if (!uuid.safeParse(id).success) return fail((await getI18n()).t.common.genericError);
   const { supabase } = await requireUser();
-  // Numerics selected as text — never round-trip money through JS floats.
-  const { data, error } = await supabase.from("trades").select(`${TRADE_COLUMNS},executions(${EXECUTION_COLUMNS})`).eq("id", id).single();
-  if (error || !data) return fail("Trade not found.");
-  const t = data as unknown as TradeWithRelations;
-  const { id: _id, executions, trade_tags, created_at: _c, updated_at: _u, activity_at: _a, screenshots: _s, ...rest } = t;
-  const { data: newId, error: e2 } = await supabase.rpc("save_trade", {
-    p_trade: { ...rest, is_draft: true },
-    p_executions: executions.map((e) => ({ side: e.side, quantity: e.quantity, price: e.price, executed_at: e.executed_at, fee: e.fee, commission: e.commission })),
-    p_tag_ids: (trade_tags ?? []).map((x) => x.tag_id),
-  });
+  const { data, error } = await supabase.from("trades").select(TRADE_COLUMNS).eq("id", id).single();
+  if (error || !data) return fail((await getI18n()).t.trade.errors.notFound);
+  const tr = data as unknown as TradeRow;
+  const copy = {
+    account_id: tr.account_id, symbol: tr.symbol, asset_class: tr.asset_class, direction: tr.direction, status: tr.status, entry_mode: "simple",
+    opened_at: tr.opened_at, closed_at: tr.closed_at, manual_initial_risk: tr.manual_initial_risk ?? tr.initial_risk, initial_risk: tr.initial_risk,
+    gross_pnl: tr.gross_pnl, fees: tr.fees, swap: tr.swap, net_pnl: tr.net_pnl, pnl_source: tr.pnl_source, r_multiple: tr.r_multiple,
+    planned_rr: tr.planned_rr, outcome: tr.outcome, holding_seconds: tr.holding_seconds, pnl_currency: tr.pnl_currency,
+    emotional_state: tr.emotional_state, psychology_notes: tr.psychology_notes, notes: tr.notes, tradingview_url: tr.tradingview_url,
+  };
+  const { data: inserted, error: e2 } = await supabase.from("trades").insert(copy).select("id").single();
   if (e2) return fail(e2.message);
   revalidatePath("/", "layout");
-  return { ok: true, data: { id: newId as string } };
-}
-
-const bulkSchema = z.object({
-  ids: z.array(uuid).min(1).max(1000),
-  addTags: z.array(z.string().trim().min(1).max(48)).max(20).default([]),
-  addMistakes: z.array(z.string().trim().min(1).max(48)).max(20).default([]),
-  strategyId: z.string().uuid().nullable().optional(),
-  session: z.string().max(40).nullable().optional(),
-});
-
-/** Bulk edits limited to non-financial fields (tags, strategy, session) — safe by design. */
-export async function bulkUpdateTrades(input: z.input<typeof bulkSchema>): Promise<ActionResult> {
-  const parsed = bulkSchema.safeParse(input);
-  if (!parsed.success) return fail("Invalid bulk edit.");
-  const { supabase } = await requireUser();
-  const { ids, addTags, addMistakes, strategyId, session } = parsed.data;
-  const patch: Record<string, unknown> = {};
-  if (strategyId !== undefined) patch.strategy_id = strategyId;
-  if (session !== undefined) patch.session = session;
-  if (Object.keys(patch).length) {
-    const { error } = await supabase.from("trades").update(patch).in("id", ids);
-    if (error) return fail(error.message);
-  }
-  const pairs: { name: string; kind: "tag" | "mistake" }[] = [
-    ...addTags.map((name) => ({ name, kind: "tag" as const })),
-    ...addMistakes.map((name) => ({ name, kind: "mistake" as const })),
-  ];
-  if (pairs.length) {
-    const { data: tags, error } = await supabase.from("tags").upsert(pairs, { onConflict: "user_id,kind,name" }).select("id");
-    if (error) return fail(error.message);
-    const rows = ids.flatMap((trade_id) => (tags ?? []).map((t) => ({ trade_id, tag_id: t.id })));
-    const { error: e2 } = await supabase.from("trade_tags").upsert(rows, { onConflict: "trade_id,tag_id", ignoreDuplicates: true });
-    if (e2) return fail(e2.message);
-  }
-  revalidatePath("/", "layout");
-  return { ok: true };
+  return { ok: true, data: { id: inserted.id } };
 }
 
 const shotSchema = z.object({
-  tradeId: uuid.optional(),
-  journalId: uuid.optional(),
+  tradeId: uuid,
   storagePath: z.string().min(10).max(300),
   kind: z.enum(["before", "after", "other"]).default("other"),
-  caption: z.string().max(200).optional(),
 });
 
 /** Register a screenshot uploaded directly to Storage (path must be inside the user's folder). */
 export async function addScreenshot(input: z.input<typeof shotSchema>): Promise<ActionResult> {
   const parsed = shotSchema.safeParse(input);
-  if (!parsed.success || !!parsed.data.tradeId === !!parsed.data.journalId) return fail("Invalid screenshot.");
+  const { t } = await getI18n();
+  if (!parsed.success) return fail(t.common.genericError);
   const { supabase, user } = await requireUser();
-  if (!parsed.data.storagePath.startsWith(`${user.id}/`)) return fail("Invalid storage path.");
-  const { error } = await supabase.from("screenshots").insert({
-    trade_id: parsed.data.tradeId ?? null, journal_id: parsed.data.journalId ?? null,
-    storage_path: parsed.data.storagePath, kind: parsed.data.kind, caption: parsed.data.caption ?? null,
-  });
+  if (!parsed.data.storagePath.startsWith(`${user.id}/`)) return fail(t.common.genericError);
+  const { error } = await supabase.from("screenshots").insert({ trade_id: parsed.data.tradeId, storage_path: parsed.data.storagePath, kind: parsed.data.kind });
   if (error) {
     await supabase.storage.from("screenshots").remove([parsed.data.storagePath]);
     return fail(error.message);
@@ -117,10 +81,11 @@ export async function addScreenshot(input: z.input<typeof shotSchema>): Promise<
 }
 
 export async function deleteScreenshot(id: string): Promise<ActionResult> {
-  if (!uuid.safeParse(id).success) return fail("Invalid screenshot.");
+  const { t } = await getI18n();
+  if (!uuid.safeParse(id).success) return fail(t.common.genericError);
   const { supabase } = await requireUser();
   const { data } = await supabase.from("screenshots").select("storage_path").eq("id", id).single();
-  if (!data) return fail("Screenshot not found.");
+  if (!data) return fail(t.common.genericError);
   const { error } = await supabase.from("screenshots").delete().eq("id", id);
   if (error) return fail(error.message);
   await supabase.storage.from("screenshots").remove([data.storage_path]);
