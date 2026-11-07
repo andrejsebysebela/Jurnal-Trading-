@@ -1,9 +1,13 @@
 -- RLS & integrity tests. Run with: pnpm test:db
 \set ON_ERROR_STOP on
 begin;
-insert into auth.users (id, email) values
-  ('11111111-1111-1111-1111-111111111111', 'alice@example.com'),
-  ('22222222-2222-2222-2222-222222222222', 'bob@example.com');
+insert into auth.users (id, email, raw_user_meta_data) values
+  ('11111111-1111-1111-1111-111111111111', 'alice@example.com', '{"timezone":"Europe/Bratislava"}'),
+  ('22222222-2222-2222-2222-222222222222', 'bob@example.com', '{"timezone":"Not/AZone"}');
+do $$ begin
+  assert (select timezone from public.profiles where id = '11111111-1111-1111-1111-111111111111') = 'Europe/Bratislava', 'signup timezone not stored';
+  assert (select timezone from public.profiles where id = '22222222-2222-2222-2222-222222222222') = 'UTC', 'invalid timezone not rejected';
+end $$;
 
 -- profile trigger created rows
 do $$ begin assert (select count(*) from public.profiles) = 2, 'profiles not created'; end $$;
@@ -86,6 +90,18 @@ do $$ begin
   assert (select net_pnl from trades) = 995.8, 'alice trade modified by bob';
   assert (select count(*) from accounts) = 1, 'alice account deleted by bob';
   assert (select count(*) from storage.objects) = 0, 'storage leak';
+end $$;
+
+-- rate limiting: 3rd call within the window is refused; private schema is not readable
+do $$ begin
+  assert public.check_rate_limit('export', 2, 3600) = true, 'rate limit call 1';
+  assert public.check_rate_limit('export', 2, 3600) = true, 'rate limit call 2';
+  assert public.check_rate_limit('export', 2, 3600) = false, 'rate limit not enforced';
+  begin
+    perform count(*) from private.rate_limit_events;
+    raise exception 'private schema readable by authenticated';
+  exception when insufficient_privilege then null;
+  end;
 end $$;
 
 -- anon sees nothing

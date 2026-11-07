@@ -38,7 +38,14 @@ Read `docs/ARCHITECTURE.md` and `docs/CALCULATIONS.md` before changing anything 
 - `pnpm test` — Vitest unit tests (engine, analytics, import). New financial logic needs hand-verified test cases.
 - `pnpm test:db` — migrations + RLS isolation tests on plain PostgreSQL (needs a local `psql`; see supabase/tests/run.sh).
 - `pnpm test:e2e` — Playwright journey against the app + local Supabase (`pnpm db:start`, `pnpm dev`).
-- `pnpm typecheck && pnpm lint && pnpm build` must pass.
+- `pnpm test:integration` — tenant isolation through the real Supabase REST/Storage API (local stack only).
+- `pnpm typecheck && pnpm lint && pnpm build` must pass; CI (`.github/workflows/ci.yml`) runs them plus `test:db` and `pnpm audit`.
+
+## Production rules
+- Never read the service-role key in app code; never commit `.env*` (only `.env.example`).
+- Auth/email links must use `siteUrl()` (`src/lib/env.ts`); redirects must go through `safeRedirectPath()`.
+- User-facing errors go through `fail()` (sanitises DB internals). Expensive actions call `rateLimit()`.
+- Never run `supabase db reset` or destructive SQL against a linked/production project; migrations are additive and reviewed with `db push --dry-run`.
 
 ## Database changes
 - Add a NEW migration in `supabase/migrations` (never edit an applied one once deployed). Enable RLS + 4 policies on every new table,

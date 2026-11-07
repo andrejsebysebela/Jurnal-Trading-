@@ -16,6 +16,8 @@ import { requireUser } from "@/lib/db/session";
 import { money, pct } from "@/lib/utils/format";
 import { deleteAccount } from "@/server/actions/management";
 
+// Server actions on this page (import / recalculation) may run longer than the default.
+export const maxDuration = 60;
 export const metadata = { title: "Accounts" };
 
 export default async function AccountsPage() {

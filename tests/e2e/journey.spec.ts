@@ -84,6 +84,15 @@ test("trader journey: account → trade → instrument spec → import → analy
   await expect(overview).toContainText("+0.79R");
   await expect(overview).toContainText("$500.00");
 
+  // Screenshot upload to private storage (direct browser → Supabase, allowed by CSP) and deletion
+  await page.getByTestId("screenshot-input").setInputFiles(path.join(__dirname, "fixtures/chart.png"));
+  const shot = page.getByRole("img", { name: "before screenshot" });
+  await expect(shot).toBeVisible();
+  expect(await shot.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  page.once("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "Delete screenshot" }).click();
+  await expect(page.getByText("No screenshots yet.")).toBeVisible();
+
   // Inline note autosave
   await page.getByLabel("What I learned").fill("Partial exits reduced variance.");
   await page.getByLabel("What I did well").click();

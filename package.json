@@ -15,7 +15,8 @@
     "test:e2e": "playwright test --trace off",
     "db:start": "SUPABASE_INTERNAL_IMAGE_REGISTRY=${SUPABASE_INTERNAL_IMAGE_REGISTRY:-public.ecr.aws} supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime,postgres-meta",
     "db:reset": "supabase db reset --local",
-    "db:stop": "supabase stop"
+    "db:stop": "supabase stop",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.3",
@@ -53,7 +54,7 @@
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.65.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.5",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -64,5 +65,14 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.1.0"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": ">=8.5.23"
+    }
   }
 }

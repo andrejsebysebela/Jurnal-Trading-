@@ -4,6 +4,7 @@ import { ACCOUNT_COLUMNS, TRADE_COLUMNS } from "@/lib/db/columns";
 import type { Account, Instrument, TradeRow } from "@/lib/db/types";
 import type { UserContext } from "@/lib/db/session";
 import { normalizeImport, parseCsv, validateMapping, type ImportMapping, type RowError } from "@/lib/import";
+import { GENERIC_ERROR } from "@/server/actions/result";
 import { calcColumns, ensureInstrument, instrumentToSpec, loadFxLookup } from "./trade-service";
 
 export interface SymbolSetting { symbol: string; assetClass: AssetClass; quoteCurrency: string | null }
@@ -137,7 +138,10 @@ export async function importCsv(
     const { error } = await sb.rpc("save_trade", { p_trade: payload, p_executions: execRows, p_tag_ids: null });
     if (error) {
       if (error.code === "23505") duplicates++;
-      else errors.push({ row: t.sourceRows[0] ?? 0, message: error.message });
+      else {
+        console.error("[import] save_trade failed", error.code, error.message);
+        errors.push({ row: t.sourceRows[0] ?? 0, message: error.code === "23514" || error.code === "22P02" ? `${t.symbol}: a value is out of range or invalid.` : GENERIC_ERROR });
+      }
       continue;
     }
     if (existingId) updated++; else imported++;

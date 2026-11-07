@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { listFxRates, listTags } from "@/lib/db/queries";
 import { requireUser } from "@/lib/db/session";
 
+// Server actions on this page (import / recalculation) may run longer than the default.
+export const maxDuration = 60;
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {

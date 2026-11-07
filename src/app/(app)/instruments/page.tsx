@@ -19,6 +19,8 @@ import { deleteInstrument } from "@/server/actions/management";
 import { instrumentToSpec } from "@/server/services/trade-service";
 import { loadAnalytics } from "@/server/services/analytics-service";
 
+// Server actions on this page (import / recalculation) may run longer than the default.
+export const maxDuration = 60;
 export const metadata = { title: "Instruments" };
 
 export default async function InstrumentsPage() {

@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/db/session";
 import { D } from "@/lib/engine";
 import { accountSchema, flattenErrors, fxRateSchema, instrumentSchema, journalSchema, profileSchema, strategySchema } from "@/lib/validation/schemas";
 import { recalculateTrades } from "@/server/services/trade-service";
+import { rateLimit } from "@/server/services/rate-limit";
 import { fail, type ActionResult } from "./result";
 
 const uuid = z.string().uuid();
@@ -211,6 +212,8 @@ export async function deleteFxRate(id: string): Promise<ActionResult> {
 
 export async function recalculateAll(): Promise<ActionResult<{ updated: number; failed: number }>> {
   const ctx = await requireUser();
+  const limited = await rateLimit(ctx.supabase, "recalculate");
+  if (limited) return fail(limited);
   const r = await recalculateTrades(ctx);
   revalidatePath("/", "layout");
   return { ok: true, data: r };

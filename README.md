@@ -39,16 +39,17 @@ Open http://127.0.0.1:3000, create an account (email confirmation is disabled lo
 | `pnpm dev` / `pnpm build` / `pnpm start` | Run / build the app |
 | `pnpm test` | Unit tests (calculation engine, analytics, CSV import) |
 | `pnpm test:db` | Apply migrations to a scratch PostgreSQL DB and run RLS/integrity tests |
-| `pnpm test:e2e` | Playwright end-to-end journey (needs app + local Supabase) |
+| `pnpm test:e2e` | Playwright end-to-end tests (needs app + local Supabase; set `E2E_SUPABASE_SERVICE_KEY` to the LOCAL secret key to include the password-reset test) |
+| `pnpm test:integration` | Tenant-isolation tests against a real (local) Supabase REST/Storage API (`SUPABASE_TEST_ANON_KEY`) |
 | `pnpm typecheck` / `pnpm lint` | Static checks |
 | `pnpm db:reset` | Re-apply migrations to local Supabase |
 
 ## Deploying
-1. Create a Supabase project; run the migrations in `supabase/migrations` (`supabase db push`).
-2. Configure Auth (site URL, redirect `https://<domain>/auth/callback`, enable email confirmations).
-3. Deploy the Next.js app (e.g. Vercel) with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** (GitHub → Vercel, Supabase Cloud, custom domain, DNS, HTTPS, troubleshooting)
+and **[docs/SECURITY.md](docs/SECURITY.md)**.
 
 ## Documentation
 - `CLAUDE.md` — permanent engineering rules
 - `docs/PRODUCT_SPEC.md`, `docs/ARCHITECTURE.md`, `docs/DATABASE.md`, `docs/CALCULATIONS.md`
+- `docs/DEPLOYMENT.md`, `docs/SECURITY.md`
 - `docs/IMPLEMENTATION_STATUS.md`, `docs/ROADMAP.md`, `docs/COMPETITIVE_ANALYSIS.md`

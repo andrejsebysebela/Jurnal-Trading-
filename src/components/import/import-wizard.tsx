@@ -19,7 +19,8 @@ import { plain } from "@/lib/utils/format";
 import { runImport } from "@/server/actions/import";
 import type { ImportSummary } from "@/server/services/import-service";
 
-const MAX_BYTES = 10 * 1024 * 1024;
+// Vercel serverless request bodies are capped at 4.5 MB.
+const MAX_BYTES = 4 * 1024 * 1024;
 
 export function ImportWizard({ accounts, instruments, savedMappings, defaultTimeZone, defaultAccountId }: {
   accounts: Account[]; instruments: Instrument[]; savedMappings: { name: string; mapping: ImportMapping }[]; defaultTimeZone: string; defaultAccountId: string;
@@ -39,7 +40,7 @@ export function ImportWizard({ accounts, instruments, savedMappings, defaultTime
   const known = useMemo(() => new Map(instruments.map((i) => [i.symbol, i])), [instruments]);
 
   const load = async (f: File) => {
-    if (f.size > MAX_BYTES) { toast.error("File is larger than 10 MB. Split it into smaller files."); return; }
+    if (f.size > MAX_BYTES) { toast.error("File is larger than 4 MB. Split it into smaller files (e.g. by year)."); return; }
     if (!/\.(csv|txt)$/i.test(f.name)) { toast.error("Please upload a .csv file."); return; }
     const text = await f.text();
     const t = parseCsv(text);
@@ -107,7 +108,7 @@ export function ImportWizard({ accounts, instruments, savedMappings, defaultTime
           >
             <FileUp className="mb-2 size-6 text-gold" />
             <p className="text-sm text-fg">{file ? file.name : "Drop a CSV file here or click to browse"}</p>
-            <p className="mt-1 text-xs text-muted">{table ? `${table.rows.length} rows · ${table.headers.length} columns` : "Max 10 MB · first row must contain headers"}</p>
+            <p className="mt-1 text-xs text-muted">{table ? `${table.rows.length} rows · ${table.headers.length} columns` : "Max 4 MB · first row must contain headers"}</p>
             <input ref={fileInput} type="file" accept=".csv,text/csv,.txt" hidden data-testid="csv-input" onChange={(e) => { const f = e.target.files?.[0]; if (f) load(f); e.target.value = ""; }} />
           </div>
         </CardContent>

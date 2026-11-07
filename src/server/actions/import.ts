@@ -5,12 +5,14 @@ import { ASSET_CLASSES } from "@/lib/engine";
 import { DATE_FORMATS } from "@/lib/import";
 import { requireUser } from "@/lib/db/session";
 import { importCsv, type ImportSummary } from "@/server/services/import-service";
+import { rateLimit } from "@/server/services/rate-limit";
 import { fail, type ActionResult } from "./result";
 
 const schema = z.object({
   accountId: z.string().uuid(),
   fileName: z.string().min(1).max(200),
-  csv: z.string().min(1).max(15_000_000),
+  // Vercel limits request bodies to 4.5 MB; the client enforces 4 MB files.
+  csv: z.string().min(1).max(4_400_000),
   mapping: z.object({
     kind: z.enum(["executions", "trades"]),
     columns: z.record(z.string(), z.string()),
@@ -28,6 +30,8 @@ export async function runImport(input: z.input<typeof schema>): Promise<ActionRe
   if (!p.success) return fail(`Invalid import: ${p.error.issues[0]?.path.join(".")} ${p.error.issues[0]?.message}`);
   try {
     const ctx = await requireUser();
+    const limited = await rateLimit(ctx.supabase, "import");
+    if (limited) return fail(limited);
     const mapping = p.data.mapping as Parameters<typeof importCsv>[1]["mapping"];
     if (p.data.saveMappingAs) {
       await ctx.supabase.from("import_mappings").upsert({ name: p.data.saveMappingAs, mapping }, { onConflict: "user_id,name" });

@@ -30,6 +30,16 @@ Migrations: `supabase/migrations/*.sql`. Tests: `supabase/tests` (`pnpm test:db`
   executions and (optionally) tags. `SECURITY INVOKER`; refuses unknown/foreign trade ids (`P0002`).
 - `handle_new_user()` — creates the profile on sign-up (`SECURITY DEFINER`, empty search_path).
 
+## Hardening migration (`20261107000003_hardening.sql`)
+- `private.rate_limit_events` (schema `private` is not exposed through the Data API; no grants to `anon`/`authenticated`).
+- `public.check_rate_limit(action, max, window_seconds) → boolean` — `SECURITY DEFINER`, pinned `search_path`, uses `auth.uid()`,
+  advisory lock per user/action, prunes events older than 24 h. Executable by `authenticated` only.
+- `handle_new_user()` now stores the sign-up timezone if it is a valid `pg_timezone_names` entry (else `UTC`) and caps display names at 80 chars.
+
+## Production verification
+`supabase/verify_production.sql` — read-only checklist (tables, RLS, policies, bucket privacy/limits, storage policies, function
+security, indexes, applied migrations). Run it in the SQL editor after every deployment of migrations.
+
 ## Storage
 Bucket `screenshots` (private, 10 MB, png/jpeg/webp/gif). Path `<user_id>/<trade|journal>/<uuid>.<ext>`; RLS on `storage.objects`
 checks the first folder equals `auth.uid()`. URLs are short-lived signed URLs.

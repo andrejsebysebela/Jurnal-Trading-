@@ -16,7 +16,7 @@ were inferred from the modules the spec lists (import, accounts/prop firms, jour
 | All 15 sidebar pages + trade new/edit/detail + day view | ✅ | E2E visits every page with no runtime errors |
 | Dashboard KPIs/charts/widgets respond to date & account filters | ✅ | E2E asserts KPI values against hand calculation |
 | Trade table: search, sort, filters, column visibility/resize, bulk edit, delete, duplicate, CSV export | ✅ | E2E (bulk edit) + manual |
-| Screenshots upload/preview/delete (private bucket, signed URLs) | ✅ | Implemented; not covered by automated test yet |
+| Screenshots upload/preview/delete (private bucket, signed URLs) | ✅ | E2E upload/view/delete + integration isolation test |
 | Responsive layout (mobile drawer, no horizontal overflow) | ✅ | iPhone 13 viewport check |
 | `pnpm lint`, `pnpm typecheck`, `pnpm build` | ✅ | clean |
 
@@ -29,3 +29,11 @@ were inferred from the modules the spec lists (import, accounts/prop firms, jour
 - No broker-specific CSV presets are shipped (we don't publish formats we can't verify); users map columns once and save the mapping.
 - Open positions use realized P&L only (no live prices).
 - Email confirmation is disabled in local `supabase/config.toml`; enable it in production.
+
+## Production-readiness pass (2026-11-07)
+- Auth: email confirmation redirect via `NEXT_PUBLIC_SITE_URL`, password reset (forgot/reset pages), token-hash `/auth/confirm`,
+  open-redirect guard, Secure cookies on HTTPS, signup timezone capture, React-19 form reset fix on the login form.
+- Security: CSP/HSTS/COOP headers, sanitised error messages, error/404 pages, per-user rate limits (migration 3), postcss override (0 audit findings).
+- Vercel compatibility: 4 MB CSV cap (4.5 MB body limit), `maxDuration` on heavy pages, pinned `packageManager`/`engines`, no localhost in production.
+- Verification added: integration isolation tests (real REST/Storage), password-reset E2E, screenshot upload E2E, `verify_production.sql`, CI workflow, Dependabot.
+- See docs/DEPLOYMENT.md and docs/SECURITY.md (remaining risks).
