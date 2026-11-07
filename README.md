@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EDGELOG
 
-## Getting Started
+Professional trading journal & performance analytics. Track trades from executions, get decimal-exact P&L, R-multiples,
+drawdown and strategy/instrument/time analytics, journal every day, and monitor prop-firm limits.
 
-First, run the development server:
+## Stack
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Radix primitives (shadcn-style) · Recharts · TanStack Table ·
+React Hook Form · Zod · Supabase (Postgres, Auth, Storage, RLS) · decimal.js · Vitest · Playwright · pnpm.
+
+## Quick start (local)
+Requirements: Node 20+, pnpm 10, Docker.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+pnpm db:start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`db:start` prints the API URL and anon/publishable key. Copy them into `.env.local` (see `.env.example`):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.local
+```
 
-## Learn More
+```bash
+pnpm dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open http://127.0.0.1:3000, create an account (email confirmation is disabled locally), then create a trading account.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> If `public.ecr.aws` is blocked on your network, start Supabase with Docker Hub images:
+> `SUPABASE_INTERNAL_IMAGE_REGISTRY=docker.io pnpm db:start`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
+| Script | Purpose |
+|---|---|
+| `pnpm dev` / `pnpm build` / `pnpm start` | Run / build the app |
+| `pnpm test` | Unit tests (calculation engine, analytics, CSV import) |
+| `pnpm test:db` | Apply migrations to a scratch PostgreSQL DB and run RLS/integrity tests |
+| `pnpm test:e2e` | Playwright end-to-end journey (needs app + local Supabase) |
+| `pnpm typecheck` / `pnpm lint` | Static checks |
+| `pnpm db:reset` | Re-apply migrations to local Supabase |
 
-## Deploy on Vercel
+## Deploying
+1. Create a Supabase project; run the migrations in `supabase/migrations` (`supabase db push`).
+2. Configure Auth (site URL, redirect `https://<domain>/auth/callback`, enable email confirmations).
+3. Deploy the Next.js app (e.g. Vercel) with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentation
+- `CLAUDE.md` — permanent engineering rules
+- `docs/PRODUCT_SPEC.md`, `docs/ARCHITECTURE.md`, `docs/DATABASE.md`, `docs/CALCULATIONS.md`
+- `docs/IMPLEMENTATION_STATUS.md`, `docs/ROADMAP.md`, `docs/COMPETITIVE_ANALYSIS.md`
