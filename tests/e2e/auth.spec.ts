@@ -8,6 +8,17 @@ import { expect, test } from "@playwright/test";
 const url = process.env.E2E_SUPABASE_URL ?? "http://127.0.0.1:54321";
 const serviceKey = process.env.E2E_SUPABASE_SERVICE_KEY;
 
+test("public 3D landing page renders and leads to sign-up", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Your edge.");
+  await page.getByRole("link", { name: "Create account" }).first().click();
+  await page.waitForURL("**/signup");
+  expect(errors).toEqual([]);
+});
+
 test("forgot password page never reveals whether an email exists", async ({ page }) => {
   await page.goto("/login");
   await page.getByRole("link", { name: "Forgot password?" }).click();

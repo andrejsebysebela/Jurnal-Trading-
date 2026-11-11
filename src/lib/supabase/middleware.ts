@@ -20,7 +20,8 @@ export async function updateSession(request: NextRequest) {
   });
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
-  const isPublic = PUBLIC.some((p) => path.startsWith(p));
+  // "/" is the public landing page (exact match only).
+  const isPublic = path === "/" || PUBLIC.some((p) => path.startsWith(p));
   if (!user && path.startsWith("/api/")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

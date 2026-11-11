@@ -44,3 +44,16 @@ select option, select optgroup { background-color: #141922; color: #F5F5F5; }
 select option:checked { background-color: #2a3240; }
 select option:disabled { color: #657080; }
 datalist option { background-color: #141922; color: #F5F5F5; }
+
+/* ── Landing page colour theme ─────────────────────────────────────────────
+   Large, blurred brand-colour glows drifting slowly over the dark background. */
+.landing-glow { position: absolute; border-radius: 9999px; filter: blur(80px); opacity: 0.95; will-change: transform; }
+.landing-glow-gold { width: 58vw; height: 58vw; top: -18vw; right: -12vw; background: radial-gradient(circle, rgba(232,190,110,0.62), rgba(198,161,91,0.28) 45%, transparent 70%); animation: glow-a 26s ease-in-out infinite alternate; }
+.landing-glow-emerald { width: 52vw; height: 52vw; bottom: -18vw; left: -14vw; background: radial-gradient(circle, rgba(46,196,140,0.5), rgba(32,150,140,0.2) 45%, transparent 70%); animation: glow-b 32s ease-in-out infinite alternate; }
+.landing-glow-midnight { width: 64vw; height: 64vw; top: 22%; left: 18%; background: radial-gradient(circle, rgba(70,92,190,0.42), rgba(40,52,120,0.18) 45%, transparent 70%); animation: glow-c 38s ease-in-out infinite alternate; }
+.landing-glow-amber { width: 34vw; height: 34vw; top: 52%; right: 4%; background: radial-gradient(circle, rgba(236,130,70,0.34), transparent 70%); animation: glow-b 29s ease-in-out infinite alternate-reverse; }
+@keyframes glow-a { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(-8vw, 10vh, 0) scale(1.15); } }
+@keyframes glow-b { from { transform: translate3d(0, 0, 0) scale(1.05); } to { transform: translate3d(9vw, -8vh, 0) scale(0.92); } }
+@keyframes glow-c { from { transform: translate3d(-6vw, -4vh, 0) scale(0.95); } to { transform: translate3d(6vw, 6vh, 0) scale(1.1); } }
+.landing-grain { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+@media (prefers-reduced-motion: reduce) { .landing-glow { animation: none; } }

@@ -49,3 +49,13 @@ Requested by the owner after first production use:
   auth pages and Settings (cookie, defaults to the browser language).
 - Fixed: native dropdown options were white-on-white on Windows; screenshots picked in the new-trade form were dropped.
 - Verified: 56 unit tests, RLS suite, 5 API isolation tests, 80/80 production checks, 6 E2E tests on the production build (EN + SK), mobile width.
+
+## Public landing page (2026-11-11, branch `landing-3d`)
+- `/` is a public, bilingual landing page with an animated colour theme: slow-drifting gold, emerald, midnight-blue and
+  amber glows over the dark background (pure CSS, `.landing-glow*` in `globals.css`), fine grain and a readability vignette.
+- Owner feedback 2026-11-11: no 3D, no charts (equity ribbon, bull/bear figures and candlestick chart were all rejected);
+  three.js / @react-three/fiber were removed from the dependencies.
+- Signed-in users are redirected to `/dashboard`; anonymous users see the landing page (previously redirected to `/login`).
+- Accessibility: background is decorative (`aria-hidden`), copy is real HTML; `prefers-reduced-motion` stops the glow
+  animation and the reveal transitions.
+- All figures on the page are illustrative and labelled as such; no user data is used.

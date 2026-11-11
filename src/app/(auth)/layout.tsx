@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
 import { LanguageSwitcher } from "@/components/layout/topbar";
 import { getI18n } from "@/lib/i18n/server";
@@ -8,7 +9,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       <section className="relative hidden overflow-hidden border-r border-line/60 bg-sidebar lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="pointer-events-none absolute -left-40 top-1/3 size-[520px] rounded-full bg-gold/[0.06] blur-3xl" />
-        <Logo />
+        <Link href="/" aria-label="EDGELOG"><Logo /></Link>
         <div className="relative max-w-md">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">{t.auth.tagline}</p>
           <h1 className="mt-4 text-4xl font-semibold leading-tight text-fg">{t.auth.headline}</h1>
@@ -25,7 +26,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <section className="relative flex items-center justify-center p-6">
         <div className="absolute right-6 top-6"><LanguageSwitcher /></div>
         <div className="w-full max-w-sm">
-          <div className="mb-10 lg:hidden"><Logo /></div>
+          <Link href="/" className="mb-10 block lg:hidden" aria-label="EDGELOG"><Logo /></Link>
           {children}
         </div>
       </section>
