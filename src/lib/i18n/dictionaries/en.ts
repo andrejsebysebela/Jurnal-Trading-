@@ -136,11 +136,11 @@ const en = {
     unknownTimezone: "Unknown timezone",
   },
   landing: {
-    metaTitle: "EDGELOG — trading journal in three dimensions",
+    metaTitle: "EDGELOG — trading journal for traders who measure their edge",
     metaDescription: "Log every trade in seconds and see your real edge: equity curve, R-multiples and statistics per pair, day and prop firm account.",
     signIn: "Sign in", start: "Create account", scroll: "Scroll to explore", sample: "Illustrative data",
     hero: {
-      eyebrow: "Trading journal · statistics · prop firms", title1: "Your edge.", title2: "In three dimensions.",
+      eyebrow: "Trading journal · statistics · prop firms", title1: "Your edge.", title2: "Measured precisely.",
       body: "Log every trade in seconds. EDGELOG turns your results into an equity curve, R-multiples and honest statistics per pair, day and account.",
     },
     journal: {

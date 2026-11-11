@@ -136,11 +136,11 @@ const sk: Dictionary = {
     unknownTimezone: "Neznáme časové pásmo",
   },
   landing: {
-    metaTitle: "EDGELOG — obchodný denník v troch rozmeroch",
+    metaTitle: "EDGELOG — obchodný denník pre tradera, ktorý meria svoju výhodu",
     metaDescription: "Zapíšte každý obchod za pár sekúnd a uvidíte svoju skutočnú výhodu: krivku kapitálu, R-násobky a štatistiky podľa páru, dňa a prop firm účtu.",
     signIn: "Prihlásiť sa", start: "Vytvoriť účet", scroll: "Posúvajte a objavujte", sample: "Ukážkové dáta",
     hero: {
-      eyebrow: "Obchodný denník · štatistiky · prop firmy", title1: "Tvoja výhoda.", title2: "V troch rozmeroch.",
+      eyebrow: "Obchodný denník · štatistiky · prop firmy", title1: "Tvoja výhoda.", title2: "Presne zmeraná.",
       body: "Zapíš každý obchod za pár sekúnd. EDGELOG z tvojich výsledkov vytvorí krivku kapitálu, R-násobky a úprimné štatistiky podľa páru, dňa aj účtu.",
     },
     journal: {

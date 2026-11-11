@@ -50,12 +50,12 @@ Requested by the owner after first production use:
 - Fixed: native dropdown options were white-on-white on Windows; screenshots picked in the new-trade form were dropped.
 - Verified: 56 unit tests, RLS suite, 5 API isolation tests, 80/80 production checks, 6 E2E tests on the production build (EN + SK), mobile width.
 
-## Public 3D landing page (2026-11-11, branch `landing-3d`)
-- `/` is a public, bilingual, scroll-driven 3D page (three.js + @react-three/fiber, lazy-loaded only on this route):
-  golden equity ribbon, candle field, calendar heatmap, prop-firm progress rings, final overview shot.
+## Public landing page (2026-11-11, branch `landing-3d`)
+- `/` is a public, bilingual landing page with an animated colour theme: slow-drifting gold, emerald, midnight-blue and
+  amber glows over the dark background (pure CSS, `.landing-glow*` in `globals.css`), fine grain and a readability vignette.
+- Owner feedback 2026-11-11: no 3D, no charts (equity ribbon, bull/bear figures and candlestick chart were all rejected);
+  three.js / @react-three/fiber were removed from the dependencies.
 - Signed-in users are redirected to `/dashboard`; anonymous users see the landing page (previously redirected to `/login`).
-- Accessibility & performance: canvas is decorative (`aria-hidden`), copy is real HTML; `prefers-reduced-motion` disables
-  camera smoothing and reveal animations; no-WebGL devices get a gradient fallback; DPR capped at 1.75.
+- Accessibility: background is decorative (`aria-hidden`), copy is real HTML; `prefers-reduced-motion` stops the glow
+  animation and the reveal transitions.
 - All figures on the page are illustrative and labelled as such; no user data is used.
-- The requested reference video could not be viewed from the build environment (YouTube bot protection);
-  the design follows the "cinematic 3D website" genre named in its title.

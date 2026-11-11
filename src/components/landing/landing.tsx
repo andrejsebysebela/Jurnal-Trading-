@@ -1,6 +1,5 @@
 "use client";
 import { ArrowRight, BarChart3, CalendarDays, ChevronDown, Layers, Orbit } from "lucide-react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/layout/logo";
@@ -9,18 +8,6 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n/client";
 import { fill } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils/cn";
-
-// three.js is only downloaded on this page, after hydration.
-const LandingScene = dynamic(() => import("./scene"), { ssr: false });
-
-function hasWebGL(): boolean {
-  try {
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
 
 /** Fades/slides children in when they enter the viewport (instant with reduced motion). */
 function Reveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -64,26 +51,6 @@ function Kicker({ icon: Icon, children }: { icon: typeof Layers; children: React
 export function Landing() {
   const { t, f } = useI18n();
   const L = t.landing;
-  const progress = useRef(0);
-  const [webgl, setWebgl] = useState<boolean | null>(null);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    setWebgl(hasWebGL());
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onMq = () => setReduced(mq.matches);
-    mq.addEventListener("change", onMq);
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      progress.current = max > 0 ? window.scrollY / max : 0;
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); mq.removeEventListener("change", onMq); };
-  }, []);
-
   const sampleKpis = [
     { label: t.stats.winRate, value: f.pct("58.3"), tone: "text-fg" },
     { label: t.stats.avgR, value: f.r("0.84"), tone: "text-profit" },
@@ -93,18 +60,16 @@ export function Landing() {
 
   return (
     <div className="relative bg-bg text-fg">
-      {/* 3D background */}
-      <div className="fixed inset-0 z-0" aria-hidden>
-        {webgl ? <LandingScene progress={progress} reduced={reduced} /> : null}
-        {/* Fallback / loading backdrop */}
-        <div className={cn("absolute inset-0 transition-opacity duration-1000", webgl ? "pointer-events-none opacity-0" : "opacity-100")}
-          style={{ background: "radial-gradient(60% 50% at 70% 30%, rgba(198,161,91,0.16), transparent 70%), radial-gradient(40% 40% at 20% 80%, rgba(57,185,128,0.08), transparent 70%), #090B0F" }} />
-        {/* phones: the copy spans the full width, so dim the whole scene */}
-        <div className="pointer-events-none absolute inset-0 bg-bg/60 sm:hidden" />
-        {/* left scrim keeps left-aligned copy readable over the scene */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(9,11,15,0.82)_0%,rgba(9,11,15,0.45)_32%,transparent_58%)]" />
+      {/* Colour theme: slow-moving brand glows (gold, emerald, midnight) over the deep charcoal background */}
+      <div className="fixed inset-0 z-0 overflow-hidden bg-[#07090C]" aria-hidden>
+        <div className="landing-glow landing-glow-gold" />
+        <div className="landing-glow landing-glow-emerald" />
+        <div className="landing-glow landing-glow-midnight" />
+        <div className="landing-glow landing-glow-amber" />
+        {/* fine grain keeps the gradients from banding */}
+        <div className="landing-grain absolute inset-0 opacity-[0.06] mix-blend-overlay" />
         {/* readability vignette */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,transparent_40%,rgba(9,11,15,0.75)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(130%_95%_at_50%_45%,transparent_45%,rgba(7,9,12,0.6)_100%)]" />
       </div>
 
       <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between gap-3 bg-gradient-to-b from-bg/90 to-transparent px-5 sm:px-10">
