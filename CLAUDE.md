@@ -7,6 +7,7 @@ Read `docs/ARCHITECTURE.md` and `docs/CALCULATIONS.md` before changing anything 
 Trades are entered in the **simple journal** (`entry_mode = 'simple'`): pair, direction, risk amount, result, planned RR,
 open/close time, account, screenshots / TradingView link, emotion + psychology notes, notes. Statistics derive from these.
 Accounts are prop firm (challenge / verification / funded) or personal (live / demo), each with its own statistics.
+The public landing page lives in `src/components/landing/` (3D scene in `scene.tsx`, illustrative data only).
 Do not reintroduce the removed detailed modules (executions UI, instruments, strategies, journal, playbook, import) unless asked.
 
 ## Internationalisation

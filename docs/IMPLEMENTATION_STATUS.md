@@ -49,3 +49,13 @@ Requested by the owner after first production use:
   auth pages and Settings (cookie, defaults to the browser language).
 - Fixed: native dropdown options were white-on-white on Windows; screenshots picked in the new-trade form were dropped.
 - Verified: 56 unit tests, RLS suite, 5 API isolation tests, 80/80 production checks, 6 E2E tests on the production build (EN + SK), mobile width.
+
+## Public 3D landing page (2026-11-11, branch `landing-3d`)
+- `/` is a public, bilingual, scroll-driven 3D page (three.js + @react-three/fiber, lazy-loaded only on this route):
+  golden equity ribbon, candle field, calendar heatmap, prop-firm progress rings, final overview shot.
+- Signed-in users are redirected to `/dashboard`; anonymous users see the landing page (previously redirected to `/login`).
+- Accessibility & performance: canvas is decorative (`aria-hidden`), copy is real HTML; `prefers-reduced-motion` disables
+  camera smoothing and reveal animations; no-WebGL devices get a gradient fallback; DPR capped at 1.75.
+- All figures on the page are illustrative and labelled as such; no user data is used.
+- The requested reference video could not be viewed from the build environment (YouTube bot protection);
+  the design follows the "cinematic 3D website" genre named in its title.

@@ -135,6 +135,31 @@ const sk: Dictionary = {
     data: "Dáta", dataBody: "Stiahnite si všetky svoje dáta (účty, obchody, poznámky) vo formáte JSON.", exportAll: "Exportovať všetky dáta",
     unknownTimezone: "Neznáme časové pásmo",
   },
+  landing: {
+    metaTitle: "EDGELOG — obchodný denník v troch rozmeroch",
+    metaDescription: "Zapíšte každý obchod za pár sekúnd a uvidíte svoju skutočnú výhodu: krivku kapitálu, R-násobky a štatistiky podľa páru, dňa a prop firm účtu.",
+    signIn: "Prihlásiť sa", start: "Vytvoriť účet", scroll: "Posúvajte a objavujte", sample: "Ukážkové dáta",
+    hero: {
+      eyebrow: "Obchodný denník · štatistiky · prop firmy", title1: "Tvoja výhoda.", title2: "V troch rozmeroch.",
+      body: "Zapíš každý obchod za pár sekúnd. EDGELOG z tvojich výsledkov vytvorí krivku kapitálu, R-násobky a úprimné štatistiky podľa páru, dňa aj účtu.",
+    },
+    journal: {
+      kicker: "01 · Denník", title: "Každý obchod za desať sekúnd",
+      body: "Pár, smer, riziko, výsledok, RR a časy. R-násobok a trvanie sa vypočítajú počas písania — presne na cent.",
+      points: ["Screenshoty a TradingView odkazy", "Emócie a poznámky k psychológii", "Slovenčina aj angličtina"],
+    },
+    stats: {
+      kicker: "02 · Štatistiky", title: "Čísla, ktoré hovoria pravdu",
+      body: "Úspešnosť, profit faktor, priemer na obchod a drawdown — podľa páru, dňa v týždni, hodiny, emócie aj účtu.",
+    },
+    calendar: { kicker: "03 · Kalendár", title: "Tvoj mesiac ako mapa", body: "Zelené a červené dni na prvý pohľad. Otvor ktorýkoľvek deň a uvidíš, čo sa presne stalo a prečo." },
+    accounts: {
+      kicker: "04 · Prop firmy", title: "Každý účet na vlastnej orbite",
+      body: "Challenge, verifikácia aj funded — alebo tvoj osobný live a demo účet. Každý s vlastnými štatistikami, profitovým cieľom a limitmi drawdownu.",
+    },
+    final: { title: "Začni budovať svoju výhodu ešte dnes.", body: "Účet vytvoríš za minútu. Tvoje dáta zostávajú súkromné, chránené zabezpečením na úrovni riadkov databázy." },
+    footer: "© {year} EDGELOG · Obchodný denník",
+  },
   errors: {
     title: "Niečo sa pokazilo", body: "Vaše dáta sú v bezpečí. Skúste to znova a ak problém pretrváva, kontaktujte podporu.", reference: "Referencia {ref}",
     tryAgain: "Skúsiť znova", toDashboard: "Na prehľad", notFoundTitle: "Stránka sa nenašla", notFoundBody: "Stránka neexistuje alebo k nej nemáte prístup.",

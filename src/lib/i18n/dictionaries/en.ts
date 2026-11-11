@@ -135,6 +135,31 @@ const en = {
     data: "Data", dataBody: "Download all your data (accounts, trades, notes) as JSON.", exportAll: "Export all data",
     unknownTimezone: "Unknown timezone",
   },
+  landing: {
+    metaTitle: "EDGELOG — trading journal in three dimensions",
+    metaDescription: "Log every trade in seconds and see your real edge: equity curve, R-multiples and statistics per pair, day and prop firm account.",
+    signIn: "Sign in", start: "Create account", scroll: "Scroll to explore", sample: "Illustrative data",
+    hero: {
+      eyebrow: "Trading journal · statistics · prop firms", title1: "Your edge.", title2: "In three dimensions.",
+      body: "Log every trade in seconds. EDGELOG turns your results into an equity curve, R-multiples and honest statistics per pair, day and account.",
+    },
+    journal: {
+      kicker: "01 · Journal", title: "Every trade in ten seconds",
+      body: "Pair, direction, risk, result, RR and times. The R-multiple and duration are calculated while you type — exact to the cent.",
+      points: ["Screenshots and TradingView links", "Emotion and psychology notes", "Slovak and English"],
+    },
+    stats: {
+      kicker: "02 · Statistics", title: "Numbers that tell the truth",
+      body: "Win rate, profit factor, expectancy and drawdown — broken down by pair, weekday, hour, emotion and account.",
+    },
+    calendar: { kicker: "03 · Calendar", title: "Your month as a map", body: "Green and red days at a glance. Open any day to see exactly what happened and why." },
+    accounts: {
+      kicker: "04 · Prop firms", title: "Every account on its own orbit",
+      body: "Challenge, verification and funded — or your personal live and demo account. Each one with its own statistics, profit target and drawdown limits.",
+    },
+    final: { title: "Start building your edge today.", body: "Create your account in a minute. Your data stays private, protected by row-level security.", },
+    footer: "© {year} EDGELOG · Trading journal",
+  },
   errors: {
     title: "Something went wrong", body: "Your data is safe. Try again, and if the problem persists contact support.", reference: "Reference {ref}",
     tryAgain: "Try again", toDashboard: "Go to dashboard", notFoundTitle: "Page not found", notFoundBody: "The page doesn't exist or you don't have access to it.",
